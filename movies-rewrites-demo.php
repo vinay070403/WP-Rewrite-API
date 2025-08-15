@@ -128,3 +128,42 @@ class Movies_Rewrites_Demo {
 }
 
 Movies_Rewrites_Demo::init();
+
+// Add endpoints on init
+add_action('init', function() {
+    // Trailer endpoint - visible only on single movie pages
+    add_rewrite_endpoint('trailer', EP_PERMALINK);
+
+    // Behind-the-scenes endpoint - not linked to default masks
+    add_rewrite_endpoint('behind-the-scenes', EP_NONE);
+});
+
+// Handle endpoint content display
+add_action('template_redirect', function() {
+    global $wp_query;
+
+    // Trailer endpoint
+    if (isset($wp_query->query_vars['trailer'])) {
+        status_header(200);
+        echo "<h1>🎬 Movie Trailer</h1>";
+        echo "<p>Here is the trailer for this movie!</p>";
+        exit;
+    }
+
+    // Behind-the-scenes endpoint
+    if (isset($wp_query->query_vars['behind-the-scenes'])) {
+        status_header(200);
+        echo "<h1>🎥 Behind the Scenes</h1>";
+        echo "<p>Exclusive BTS content for this movie!</p>";
+        exit;
+    }
+});
+
+// Flush rewrite rules on plugin activation
+register_activation_hook(__FILE__, function() {
+    // Register endpoints first
+    add_rewrite_endpoint('trailer', EP_PERMALINK);
+    add_rewrite_endpoint('behind-the-scenes', EP_NONE);
+    flush_rewrite_rules();
+});
+

@@ -167,3 +167,12 @@ register_activation_hook(__FILE__, function() {
     flush_rewrite_rules();
 });
 
+// Custom rule for EP_NONE endpoint
+add_action('init', function() {
+    // Match: /movies/action/the-avengers/behind-the-scenes/
+    add_rewrite_rule(
+        '^movies/([^/]+)/([^/]+)/behind-the-scenes/?$',
+        'index.php?post_type=movie&name=$matches[2]&behind-the-scenes=1',
+        'top'
+    );
+});
